@@ -93,16 +93,6 @@
             font-weight: 500;
         }
         
-        .joke-category {
-            display: inline-block;
-            background: #f5576c;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            margin-top: 15px;
-        }
-        
         .loading {
             display: none;
             text-align: center;
@@ -206,7 +196,6 @@
                 <div class="joke-text" id="jokeText">
                     點擊按鈕獲取一個隨機笑話！
                 </div>
-                <div class="joke-category" id="jokeType" style="display: none;"></div>
             </div>
         </div>
         
@@ -228,21 +217,29 @@
         let currentJoke = '';
         let jokeCount = 0;
         
-        // 類別中文翻譯對照表
-        const categoryTranslation = {
-            'General': '日常笑話',
-            'Programming': '程式笑話',
-            'Knock-knock': '敲門笑話',
-            'Pun': '雙關笑話',
-            'Spooky': '恐怖笑話',
-            'Christmas': '聖誕笑話'
-        };
+        // 笑話數據庫（繁體中文笑話）
+        const chineseJokes = [
+            "為什麼小明的成績這麼差？\n因為他爸爸姓差。",
+            "為什麼熊貓那麼貴？\n因為它的代碼是 $panda。",
+            "什麼是程序員最喜歡的運動？\n除蟲。",
+            "程序員為什麼喜歡喝咖啡？\n因為 Java！",
+            "怎樣成為一名成功的程序員？\n睡眠不足 + 咖啡 = 代碼。",
+            "一個 SQL 查詢走進一間酒吧，走到兩個表面前說：\n我能加入你們嗎？",
+            "為什麼程序員總是混淆萬聖節和聖誕節？\n因為 Oct 31 = Dec 25。",
+            "有多少程序員需要來改變一個燈泡？\n一個人。但首先他要檢查棧溢出。",
+            "女友問我：你是在看著我，還是在看手機？\n我說：看著你啊。\n她說：那你為什麼一直滑屏？\n我說：我在欣賞你呢。",
+            "什麼是程序員的浪漫？\n我對你的愛是用 C++ 寫的，永遠不會被垃圾回收。",
+            "程序員的三大謊言：\n1. 我馬上就來\n2. 這是最後一個 Bug\n3. 我已經在做了",
+            "為什麼程序員喜歡用黑色主題？\n因為光明太傷眼睛了。",
+            "一個程序員走進餐廳說：給我一杯咖啡。\n服務員說：中杯還是大杯？\n程序員說：能不能給我一個無限循環的咖啡？",
+            "什麼時候一個程序員會說謊？\n當他的嘴巴在動的時候。",
+            "程序員為什麼總是單身？\n因為他們找不到另一半來完成他們的代碼。"
+        ];
 
         async function getJoke() {
             const btn = document.getElementById('generateBtn');
             const loading = document.getElementById('loading');
             const jokeText = document.getElementById('jokeText');
-            const jokeType = document.getElementById('jokeType');
             const errorMessage = document.getElementById('errorMessage');
             
             // 重置錯誤訊息
@@ -252,33 +249,14 @@
             btn.disabled = true;
             loading.style.display = 'block';
             jokeText.innerHTML = '';
-            jokeType.style.display = 'none';
 
             try {
-                // 使用 JokeAPI - 免費笑話 API
-                const response = await fetch('https://v2.jokeapi.dev/joke/Any');
-                
-                if (!response.ok) {
-                    throw new Error('無法獲取笑話');
-                }
-                
-                const data = await response.json();
-                
-                // 檢查是否為兩部分笑話或單句笑話
-                if (data.type === 'twopart') {
-                    currentJoke = `${data.setup}\n\n${data.delivery}`;
-                } else {
-                    currentJoke = data.joke;
-                }
+                // 隨機選擇一個中文笑話
+                const randomIndex = Math.floor(Math.random() * chineseJokes.length);
+                currentJoke = chineseJokes[randomIndex];
                 
                 // 顯示笑話
                 jokeText.innerHTML = currentJoke.replace(/\n/g, '<br>');
-                
-                // 顯示類別/類型
-                const category = data.category || 'General';
-                const translatedCategory = categoryTranslation[category] || category;
-                jokeType.textContent = translatedCategory;
-                jokeType.style.display = 'inline-block';
                 
                 // 增加計數器
                 jokeCount++;
