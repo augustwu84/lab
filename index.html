@@ -19,6 +19,7 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            padding: 20px;
         }
         
         .container {
@@ -27,7 +28,7 @@
             padding: 60px 40px;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
+            max-width: 800px;
             animation: slideIn 0.8s ease-out;
         }
         
@@ -74,7 +75,7 @@
             color: #555;
             font-size: 1.1em;
             line-height: 1.8;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
         
         .buttons {
@@ -82,6 +83,7 @@
             gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
+            margin-bottom: 30px;
         }
         
         .btn {
@@ -116,6 +118,49 @@
             color: white;
         }
         
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .feature-desc {
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+        
         .footer {
             margin-top: 40px;
             padding-top: 20px;
@@ -141,6 +186,20 @@
             <button class="btn btn-primary" onclick="alert('感謝訪問！')">
                 點我問好 👍
             </button>
+        </div>
+        
+        <h2 style="color: #333; margin-bottom: 20px;">探索我的應用</h2>
+        <div class="features">
+            <a href="joke-generator.html" class="feature-card">
+                <div class="feature-icon">😂</div>
+                <div class="feature-title">笑話生成器</div>
+                <div class="feature-desc">隨機獲取趣味笑話</div>
+            </a>
+            <a href="digital-clock.html" class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <div class="feature-title">多時區時鐘</div>
+                <div class="feature-desc">查看全球時間</div>
+            </a>
         </div>
         
         <div class="footer">
