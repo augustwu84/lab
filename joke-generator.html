@@ -48,8 +48,8 @@
         }
         
         .emoji {
-            font-size: 80px;
-            margin-bottom: 20px;
+            font-size: 60px;
+            margin-bottom: 15px;
             animation: bounce 2s infinite;
         }
         
@@ -64,22 +64,65 @@
         
         h1 {
             color: #333;
-            font-size: 3em;
+            font-size: 2.5em;
             margin-bottom: 10px;
         }
         
         .subtitle {
-            color: #666;
-            font-size: 1.3em;
-            margin-bottom: 30px;
-            font-weight: 300;
+            color: #999;
+            font-size: 1em;
         }
         
-        .message {
-            color: #555;
-            font-size: 1.1em;
-            line-height: 1.8;
+        .joke-box {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 30px;
+            border-radius: 15px;
             margin-bottom: 30px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-left: 5px solid #f5576c;
+        }
+        
+        .joke-text {
+            color: #333;
+            font-size: 1.2em;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+        
+        .joke-category {
+            display: inline-block;
+            background: #f5576c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 15px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #f5576c;
+            font-size: 1.1em;
+        }
+        
+        .spinner {
+            border: 4px solid #f5576c;
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         .buttons {
@@ -90,7 +133,7 @@
         }
         
         .btn {
-            padding: 12px 30px;
+            padding: 14px 35px;
             font-size: 1em;
             border: none;
             border-radius: 25px;
@@ -98,60 +141,187 @@
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
+            font-weight: 600;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
         }
         
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px);
         }
         
         .btn-secondary {
             background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
+            color: #f5576c;
+            border: 2px solid #f5576c;
         }
         
         .btn-secondary:hover {
-            background: #667eea;
+            background: #f5576c;
             color: white;
         }
         
-        .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+        .stats {
+            text-align: center;
+            margin-top: 20px;
             color: #999;
             font-size: 0.9em;
+        }
+        
+        .error {
+            background: #ffe0e0;
+            color: #d32f2f;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #d32f2f;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="emoji">👋</div>
-        <h1>歡迎！</h1>
-        <p class="subtitle">Hi there! 我是 augustwu84</p>
+        <div class="header">
+            <div class="emoji">😂</div>
+            <h1>笑話生成器</h1>
+            <p class="subtitle">每次都能獲得一個隨機笑話！</p>
+        </div>
         
-        <p class="message">
-            感謝你來訪我的網頁！<br>
-            這是我的個人線上空間，<br>
-            希望你有愉快的訪問體驗。
-        </p>
+        <div class="error" id="errorMessage"></div>
+        
+        <div class="joke-box">
+            <div id="jokeContent">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>正在加載笑話...</p>
+                </div>
+                <div class="joke-text" id="jokeText">
+                    點擊按鈕獲取一個隨機笑話！
+                </div>
+                <div class="joke-category" id="jokeType" style="display: none;"></div>
+            </div>
+        </div>
         
         <div class="buttons">
-            <button class="btn btn-primary" onclick="alert('感謝訪問！')">
-                點我問好 👍
+            <button class="btn btn-primary" id="generateBtn" onclick="getJoke()">
+                來一個笑話 🎉
+            </button>
+            <button class="btn btn-secondary" onclick="shareJoke()">
+                分享 📤
             </button>
         </div>
         
-        <div class="footer">
-            <p>Made with ❤️ by augustwu84</p>
-            <p>2026</p>
+        <div class="stats">
+            <p>已生成笑話數：<strong id="count">0</strong> 個</p>
         </div>
     </div>
+
+    <script>
+        let currentJoke = '';
+        let jokeCount = 0;
+        
+        // 類別中文翻譯對照表
+        const categoryTranslation = {
+            'General': '日常笑話',
+            'Programming': '程式笑話',
+            'Knock-knock': '敲門笑話',
+            'Pun': '雙關笑話',
+            'Spooky': '恐怖笑話',
+            'Christmas': '聖誕笑話'
+        };
+
+        async function getJoke() {
+            const btn = document.getElementById('generateBtn');
+            const loading = document.getElementById('loading');
+            const jokeText = document.getElementById('jokeText');
+            const jokeType = document.getElementById('jokeType');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // 重置錯誤訊息
+            errorMessage.style.display = 'none';
+            
+            // 顯示加載狀態
+            btn.disabled = true;
+            loading.style.display = 'block';
+            jokeText.innerHTML = '';
+            jokeType.style.display = 'none';
+
+            try {
+                // 使用 JokeAPI - 免費笑話 API
+                const response = await fetch('https://v2.jokeapi.dev/joke/Any');
+                
+                if (!response.ok) {
+                    throw new Error('無法獲取笑話');
+                }
+                
+                const data = await response.json();
+                
+                // 檢查是否為兩部分笑話或單句笑話
+                if (data.type === 'twopart') {
+                    currentJoke = `${data.setup}\n\n${data.delivery}`;
+                } else {
+                    currentJoke = data.joke;
+                }
+                
+                // 顯示笑話
+                jokeText.innerHTML = currentJoke.replace(/\n/g, '<br>');
+                
+                // 顯示類別/類型
+                const category = data.category || 'General';
+                const translatedCategory = categoryTranslation[category] || category;
+                jokeType.textContent = translatedCategory;
+                jokeType.style.display = 'inline-block';
+                
+                // 增加計數器
+                jokeCount++;
+                document.getElementById('count').textContent = jokeCount;
+                
+            } catch (error) {
+                // 顯示錯誤訊息
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = '❌ 哎呀！無法加載笑話。請重試！';
+                jokeText.innerHTML = '抱歉，出現問題了。請重試！';
+                console.error('Error:', error);
+            } finally {
+                // 隱藏加載狀態
+                loading.style.display = 'none';
+                btn.disabled = false;
+            }
+        }
+
+        function shareJoke() {
+            if (currentJoke) {
+                // 複製到剪貼板
+                navigator.clipboard.writeText(currentJoke).then(() => {
+                    alert('笑話已複製到剪貼板！📋');
+                }).catch(() => {
+                    // 舊版瀏覽器的備選方案
+                    const text = currentJoke;
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    alert('笑話已複製到剪貼板！📋');
+                });
+            } else {
+                alert('請先獲取一個笑話！😄');
+            }
+        }
+
+        // 頁面加載時自動載入笑話
+        window.addEventListener('load', () => {
+            getJoke();
+        });
+    </script>
 </body>
 </html>
